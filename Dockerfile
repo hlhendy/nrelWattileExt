@@ -8,10 +8,10 @@ FROM python:3.12-slim
 ARG WATTILE_BRANCH
 ARG WATTILE_TAG
 ARG WATTILE_VERSION=0.3.1
-ARG HOST_UID=1022
-ARG HOST_GID=1022
-ARG USER_NAME=skyspark
-ARG GROUP_NAME=skyspark
+ARG HOST_UID=501
+ARG HOST_GID=20
+ARG USER_NAME=heatherhendy
+ARG GROUP_NAME=staff
 
 # Temporary build argument: Haxall version to clone
 ARG HAXALL_TAG=v3.1.10
@@ -33,7 +33,7 @@ RUN curl -L https://github.com/haxall/haxall/archive/refs/tags/${HAXALL_TAG}.tar
 RUN cp -r /haxall/src/lib/hxPy/py/hxpy/* .
 
 # Install Python packages
-RUN pip install --no-cache-dir -r ./requirements.txt
+RUN pip3 install --no-cache-dir -r ./requirements.txt
 
 # For Haxall <-> Docker communication?
 EXPOSE 8888
@@ -53,36 +53,36 @@ RUN <<EOT
     # Download Wattile branch
     echo "Installing Wattile from: https://github.com/NREL/Wattile/archive/${WATTILE_BRANCH}.tar.gz"
     curl -L https://github.com/NREL/Wattile/archive/${WATTILE_BRANCH}.tar.gz | tar zx -C /wattile  --strip-components 1
-    
+
     # Run pip install
-    cd /wattile
-    pip install --no-cache-dir .
-    
+    #cd /wattile
+    #pip install --no-cache-dir .
+
     # Clean up
-    rm -r /wattile
-    
+    #rm -r /wattile
+
   elif [ -n "$WATTILE_TAG" ]; then
     # Download Wattile tag
     echo "Installing Wattile from: https://github.com/NREL/Wattile/archive/refs/tags/${WATTILE_TAG}.tar.gz"
     curl -L https://github.com/NREL/Wattile/archive/refs/tags/${WATTILE_TAG}.tar.gz | tar zx -C /wattile  --strip-components 1
-    
+
     # Run pip install
-    cd /wattile
-    pip install --no-cache-dir .
-    
+    #cd /wattile
+    #pip install --no-cache-dir .
+
     # Clean up
-    rm -r /wattile
-    
+    #rm -r /wattile
+
   else
     # Install from PyPi
     echo "Installing Wattile ${WATTILE_VERSION} from PyPi"
-    pip install --no-cache-dir wattile==${WATTILE_VERSION}
+    #pip install --no-cache-dir wattile==${WATTILE_VERSION}
   fi
 EOT
 
 # Create the group and user defined above, then run as the specified user
-RUN addgroup --gid $HOST_GID $GROUP_NAME
-RUN adduser --uid $HOST_UID --gid $HOST_GID --gecos "" --disabled-password $USER_NAME
-USER ${USER_NAME}
+#RUN addgroup --gid $HOST_GID $GROUP_NAME
+#RUN adduser --uid $HOST_UID --gid $HOST_GID --gecos "" --disabled-password $USER_NAME
+#USER ${USER_NAME}:${GROUP_NAME}
 
 ENTRYPOINT ["python"]
